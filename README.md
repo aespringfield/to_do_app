@@ -1,3 +1,18 @@
+Checklist:
+
+BASE MODE:
+[ ] Create UI for user to create a task
+[ ] Store task in database & refresh to show all tasks
+[ ] Create complete button. When clicked, visual representation of task changes.
+[ ] Task completion stored in database
+[ ] Create delete button. When clicked, task is removed from DOM and database.
+
+HARD MODE:
+[ ] Create an "Are you sure?" option when deleting a task.
+
+PRO MODE:
+[ ] Put completed tasks at bottom of page; remaining tasks on top of list
+
 Hello Primers!
 
 Welcome to your 3rd-weekend challenge! Full stack is pretty awesome huh? The idea in such a short time, you are able to spin up a full application architecture is pretty incredible.
