@@ -20,9 +20,9 @@ function submitTask() {
 
       // store task in database and refresh task list
       storeAndRefresh(task);
+      resetInput();
     } else {
-      $('.taskForm').trigger('reset');
-      displayErrorMsg();
+      indicateBadInput();
     }
   });
 }
@@ -84,10 +84,15 @@ function createTaskDiv(task) {
     return taskDiv;
 }
 
-// displays message if user clicks "Add task" without entering any input
-function displayErrorMsg() {
-  console.log("WHOOPS");
-  $(".taskDesc").attr("placeholder", "Please enter a task");
+// resets input field with original placeholder text and no error indicators
+function resetInput() {
+  $('.taskDesc').attr('placeholder', 'Task description').removeClass('badInput').val("");
+}
+
+// changes placeholder text & shows error indicators
+// if user clicks "Add task" without entering any input
+function indicateBadInput() {
+  $('.taskDesc').attr('placeholder', 'Please enter a task').addClass('badInput');
 }
 
 // listens for clicks on "complete" button and calls functions to:
