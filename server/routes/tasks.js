@@ -1,6 +1,18 @@
 // requires & globals
+var express = require('express');
+var router = express.Router();
+var pg = require('pg');
 
 // create pg pool
+var config = {
+  host: 'localhost',
+  port: 5432,
+  database: 'chi',
+  max: 20,
+  idleTimeoutMillis: 30000
+};
+
+var pool = new pg.Pool(config);
 
 // routes
 
@@ -8,13 +20,30 @@
 // makes INSERT query to "tasks" table in database
 // sends back 201 status code
 router.post('/create', function(req, res) {
+  var task = req.body;
+  console.log(task);
 
 });
 
 // makes a SELECT query to "tasks" table in database
 // sends back an array of all task objects
 router.get('/refresh', function(req, res) {
-
+  pool.connect(function(connectionError, db, done) {
+    if (connectionError) {
+      console.log("ERROR CONNECTING TO DATABASE");
+      res.sendStatus(500);
+    } else {
+      db.query('SELECT * FROM "tasks"', function(queryError, result){
+        done();
+        if (queryError) {
+          console.log("ERROR MAKING QUERY");
+          res.send(500);
+        } else {
+          res.send(result.rows);
+        }
+      });
+    }
+  });
 });
 
 // makes an UPDATE query to "tasks" table in database
@@ -32,3 +61,4 @@ router.delete('/delete', function(req, res) {
 });
 
 // exports
+module.exports = router;
