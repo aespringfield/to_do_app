@@ -1,19 +1,46 @@
 $(document).ready(function() {
-
+  submitTask();
 });
 
 // listens for form submits through "Add task" button, stores task in database, and
 // refreshes task list
-function addTask() {
+function submitTask() {
   $('.taskForm').on('submit', function(e) {
     e.preventDefault();
-    refreshTasks();
+
+    //create task object
+    var task = {
+      description: $('.taskDesc').val(),
+      complete: false
+    };
+
+    // store task in database and refresh task list
+    storeAndRefresh(task);
+
+
   });
 }
 
-// POST request to store task in database
+// takes task object with properties description, complete
+// sends POST request to store task object in database
+// if successful, refreshes tasks displayed on DOM
+function storeAndRefresh(task) {
+  $.ajax({
+    type: 'POST',
+    url: '/tasks/create',
+    data: task,
+    success: function(response) {
+      console.log("Successful post");
+      refreshTasks();
+    },
+    error: function() {
+      console.log("Failed to post");
+    }
+  });
+}
 
-// GET request to refresh task list
+// sends GET request for all items in "tasks" table
+// if successful, empties taskContainer and appends all tasks
 function refreshTasks() {
   $.ajax({
     type: 'GET',
@@ -26,9 +53,11 @@ function refreshTasks() {
 }
 
 // takes an array of task objects with properties id, description, and complete
-// appends them to DOM
+// empties taskContainer of old set of tasks
+// appends new set of tasks to DOM
 function appendTasks(taskArray) {
   $el = $(".taskContainer");
+  $el.empty();
   for (var i = 0; i < taskArray.length; i++) {
     var taskDiv = createTaskDiv(taskArray[i]);
     $el.append(taskDiv);
