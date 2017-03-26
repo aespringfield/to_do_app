@@ -32,7 +32,7 @@ router.post('/create', function(req, res) {
         done();
         if (queryError) {
           console.log("ERROR MAKING QUERY");
-          res.send(500);
+          res.sendStatus(500);
         } else {
           res.sendStatus(201);
         }
@@ -53,7 +53,7 @@ router.get('/refresh', function(req, res) {
         done();
         if (queryError) {
           console.log("ERROR MAKING QUERY");
-          res.send(500);
+          res.sendStatus(500);
         } else {
           res.send(result.rows);
         }
@@ -66,7 +66,24 @@ router.get('/refresh', function(req, res) {
 // sets boolean in "complete" column to true
 // sends back 204 status code
 router.put('/complete', function(req, res) {
-
+  var task = req.body;
+  pool.connect(function(connectionError, db, done) {
+    if (connectionError) {
+      console.log("ERROR CONNECTING TO DATABASE");
+      res.sendStatus(500);
+    } else {
+      db.query('UPDATE "tasks" SET "complete" = $1 WHERE "id" = $2',
+      [task.complete, task.id], function(queryError, result) {
+        done();
+        if (queryError) {
+          console.log("ERROR MAKING QUERY");
+          res.sendStatus(500);
+        } else {
+          res.sendStatus(204);
+        }
+      });
+    }
+  });
 });
 
 // makes a DELETE query to "tasks" table in database
