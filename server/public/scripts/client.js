@@ -8,16 +8,22 @@ function submitTask() {
   $('.taskForm').on('submit', function(e) {
     e.preventDefault();
 
-    //create task object
-    var task = {
-      description: $('.taskDesc').val(),
-      complete: false
-    };
+    // check to make sure input has been entered
+    var description = $('.taskDesc').val();
+    if (description) {
 
-    // store task in database and refresh task list
-    storeAndRefresh(task);
+      // create task object
+      var task = {
+        description: $('.taskDesc').val(),
+        complete: false
+      };
 
-
+      // store task in database and refresh task list
+      storeAndRefresh(task);
+    } else {
+      $('.taskForm').trigger('reset');
+      displayErrorMsg();
+    }
   });
 }
 
@@ -70,12 +76,18 @@ function createTaskDiv(task) {
     var taskDesc = '<p>' + task.description + '</p>';
     var completeButton = '<button class="completeButton">Complete</button>';
     var deleteButton = '<button class="deleteButton">Delete</button>';
-    var dataAttrTaskId = 'data-taskId=' + task.id;
+    var dataAttrTaskId = 'data-taskId=' + task.id + " ";
     var dataAttrComplete = 'data-complete=' + task.complete;
     var taskDiv ='<div class="task"' + dataAttrTaskId + dataAttrComplete + '>' +
                   taskDesc + completeButton + deleteButton +
                   '</div';
     return taskDiv;
+}
+
+// displays message if user clicks "Add task" without entering any input
+function displayErrorMsg() {
+  console.log("WHOOPS");
+  $(".taskDesc").attr("placeholder", "Please enter a task");
 }
 
 // listens for clicks on "complete" button and calls functions to:
