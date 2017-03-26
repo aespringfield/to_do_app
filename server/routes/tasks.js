@@ -49,7 +49,7 @@ router.get('/refresh', function(req, res) {
       console.log("ERROR CONNECTING TO DATABASE");
       res.sendStatus(500);
     } else {
-      db.query('SELECT * FROM "tasks"', function(queryError, result){
+      db.query('SELECT * FROM "tasks" ORDER BY "complete", "id" ASC', function(queryError, result){
         done();
         if (queryError) {
           console.log("ERROR MAKING QUERY");
