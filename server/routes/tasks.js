@@ -49,7 +49,7 @@ router.get('/refresh', function(req, res) {
       console.log("ERROR CONNECTING TO DATABASE");
       res.sendStatus(500);
     } else {
-      db.query('SELECT * FROM "tasks" ORDER BY "complete", "id" ASC', function(queryError, result){
+      db.query('SELECT * FROM "tasks" ORDER BY "complete", "id" DESC', function(queryError, result){
         done();
         if (queryError) {
           console.log("ERROR MAKING QUERY");
@@ -79,7 +79,7 @@ router.put('/complete', function(req, res) {
           console.log("ERROR MAKING QUERY");
           res.sendStatus(500);
         } else {
-          res.send(result);
+          res.sendStatus(204);
         }
       });
     }
@@ -90,7 +90,24 @@ router.put('/complete', function(req, res) {
 // deletes task from database
 // sends back 204 status code
 router.delete('/delete', function(req, res) {
-
+  var task = req.body;
+  pool.connect(function(connectionError, db, done) {
+    if (connectionError) {
+      console.log("ERROR CONNECTING TO DATABASE");
+      res.sendStatus(500);
+    } else {
+      db.query('DELETE FROM "tasks" WHERE "id"=$1',
+      [task.id], function(queryError, result) {
+        done();
+        if (queryError) {
+          console.log("ERROR MAKING QUERY");
+          res.sendStatus(500);
+        } else {
+          res.sendStatus(204);
+        }
+      });
+    }
+  });
 });
 
 // exports

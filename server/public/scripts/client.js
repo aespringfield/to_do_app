@@ -1,6 +1,8 @@
 $(document).ready(function() {
+  refreshTasks();
   submitTask();
   markTaskComplete();
+  deleteTask();
 });
 
 // listens for form submits through "Add task" button, stores task in database, and
@@ -102,12 +104,7 @@ function indicateBadInput() {
 // change boolean in "complete" column in database to true
 function markTaskComplete() {
   $('.taskContainer').on('click', '.completeButton', function() {
-    console.log('clicked');
-
-    var $task = $(this).parent();
-    checkForComplete($task);
-
-    var taskId = $task.data('task_id');
+    var taskId = $(this).parent().data('task_id');
     console.log(taskId);
     changeCompleteBool(taskId);
   });
@@ -124,11 +121,11 @@ function checkForComplete($task) {
 
 // takes the id of a task
 // sends PUT request to change boolean in "complete" column in database to true
-function changeCompleteBool(id) {
+function changeCompleteBool(taskId) {
   $.ajax({
     type: "PUT",
     url: "/tasks/complete",
-    data: {id: id, complete: true},
+    data: {id: taskId, complete: true},
     success: function(response) {
       console.log("Successful update");
       refreshTasks();
@@ -139,5 +136,24 @@ function changeCompleteBool(id) {
 // listens for clicks on "delete" button and calls functions to:
 // remove task from database
 // refresh task list
+function deleteTask() {
+  $('.taskContainer').on('click', '.deleteButton', function() {
+    console.log("delete");
+    var taskId = $(this).parent().data("task_id");
+    deleteFromDB(taskId);
+  });
+}
 
-// DELETE request to remove task from database
+// takes the id of a task
+// sends DELETE request to remove task from database
+function deleteFromDB(taskId) {
+  $.ajax({
+    type: 'DELETE',
+    url: 'tasks/delete',
+    data: {id: taskId},
+    success: function(response) {
+      console.log("Successful delete");
+      refreshTasks();
+    }
+  });
+}
