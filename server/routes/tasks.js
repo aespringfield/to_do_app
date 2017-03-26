@@ -4,7 +4,7 @@
 
 // routes
 
-// receives a task object with the following properties: desc, complete
+// receives a task object with the following properties: description, complete
 // makes INSERT query to "tasks" table in database
 // sends back 201 status code
 router.post('/create', function(req, res) {
