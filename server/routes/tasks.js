@@ -79,7 +79,7 @@ router.put('/complete', function(req, res) {
           console.log("ERROR MAKING QUERY");
           res.sendStatus(500);
         } else {
-          res.sendStatus(204);
+          res.send(result);
         }
       });
     }

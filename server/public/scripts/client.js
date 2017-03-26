@@ -68,6 +68,7 @@ function appendTasks(taskArray) {
   for (var i = 0; i < taskArray.length; i++) {
     var taskDiv = createTaskDiv(taskArray[i]);
     $el.append(taskDiv);
+    checkForComplete($el.children().last());
   }
 }
 
@@ -104,29 +105,33 @@ function markTaskComplete() {
     console.log('clicked');
 
     var $task = $(this).parent();
-    console.log("$task is", $task);
-    addCompleteClass($task);
+    checkForComplete($task);
 
     var taskId = $task.data('task_id');
     console.log(taskId);
-    updateCompleteBool(taskId);
+    changeCompleteBool(taskId);
   });
 }
 
-// changes presentation of task element
-function addCompleteClass($task) {
-  $task.addClass('complete');
+// checks to see if a task element had a true value for data-complete and
+// changes its presentation on the DOM
+function checkForComplete($task) {
+  var complete = $task.data('complete');
+  if (complete) {
+    $task.addClass('complete');
+  }
 }
 
 // takes the id of a task
 // sends PUT request to change boolean in "complete" column in database to true
-function updateCompleteBool(id) {
+function changeCompleteBool(id) {
   $.ajax({
     type: "PUT",
     url: "/tasks/complete",
     data: {id: id, complete: true},
     success: function(response) {
       console.log("Successful update");
+      refreshTasks();
     }
   });
 }
