@@ -22,7 +22,23 @@ var pool = new pg.Pool(config);
 router.post('/create', function(req, res) {
   var task = req.body;
   console.log(task);
-
+  pool.connect(function(connectionError, db, done) {
+    if (connectionError) {
+      console.log("ERROR CONNECTING TO DATABASE");
+      res.sendStatus(500);
+    } else {
+      db.query('INSERT INTO "tasks" ("description", "complete") VALUES ($1, $2)',
+      [task.description, task.complete], function(queryError, result) {
+        done();
+        if (queryError) {
+          console.log("ERROR MAKING QUERY");
+          res.send(500);
+        } else {
+          res.sendStatus(201);
+        }
+      });
+    }
+  });
 });
 
 // makes a SELECT query to "tasks" table in database
