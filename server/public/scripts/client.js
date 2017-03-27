@@ -3,6 +3,7 @@ $(document).ready(function() {
   submitTask();
   markTaskComplete();
   deleteTask();
+  showColorOptions();
 });
 
 // listens for form submits through "Add task" button, stores task in database, and
@@ -18,6 +19,7 @@ function submitTask() {
       // create task object
       var task = {
         description: $('.taskDesc').val(),
+        label: $('.labelChoice').val(),
         complete: false
       };
 
@@ -70,14 +72,17 @@ function appendTasks(taskArray) {
   for (var i = 0; i < taskArray.length; i++) {
     var taskDiv = createTaskDiv(taskArray[i]);
     $el.append(taskDiv);
-    checkForComplete($el.children().last());
+    var $newTask = $el.children().last();
+    var confirmBox = createConfirmationDiv();
+    $newTask.append(confirmBox);
+    checkForComplete($newTask);
   }
 }
 
 // takes a task object with properties id, description, and complete
 // creates a div with the task description, a complete button, and a delete button
 function createTaskDiv(task) {
-    var taskDesc = '<p>' + task.description + '</p>';
+    var taskDesc = '<span class="taskListing">' + task.description + '</span>';
     var completeButton = '<button class="completeButton">Complete</button>';
     var deleteButton = '<button class="deleteButton">Delete</button>';
     var dataAttrTaskId = 'data-task_id=' + task.id + " ";
@@ -86,6 +91,15 @@ function createTaskDiv(task) {
                   taskDesc + completeButton + deleteButton +
                   '</div';
     return taskDiv;
+}
+
+// creates hidden confirmation div
+function createConfirmationDiv(){
+  var html = '<div class="confirmation hidden">' +
+            '<span class="confirmText">Are you sure?</span>' +
+            '<button class="continue">Continue</button>' +
+            '<button class="cancel">Cancel</button></div>';
+  return html;
 }
 
 // resets input field with original placeholder text and no error indicators
@@ -139,8 +153,25 @@ function changeCompleteBool(taskId) {
 function deleteTask() {
   $('.taskContainer').on('click', '.deleteButton', function() {
     console.log("delete");
-    var taskId = $(this).parent().data("task_id");
+    var $taskEl = $(this).parent();
+    // var taskId = $taskEl.data("task_id");
+    confirmDelete($taskEl);
+    // deleteFromDB(taskId)
+  });
+}
+
+
+// asks user to confirm deletion
+function confirmDelete($taskEl) {
+  console.log("confirm");
+  var $confirmDiv = $taskEl.find(".confirmation");
+  $confirmDiv.slideDown();
+  $('.taskContainer').on('click', '.continue', function() {
+    var taskId = $taskEl.data("task_id");
     deleteFromDB(taskId);
+  });
+  $('.taskContainer').on('click', '.cancel', function() {
+    $(this).parent().slideUp();
   });
 }
 
@@ -155,5 +186,12 @@ function deleteFromDB(taskId) {
       console.log("Successful delete");
       refreshTasks();
     }
+  });
+}
+
+function showColorOptions() {
+  $('.labelChoice').on('input', function() {
+    console.log("labelcolor");
+    $('.labelColor').slideDown();
   });
 }

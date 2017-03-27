@@ -8,11 +8,29 @@
     <title>To Do</title>
   </head>
   <body>
-    <h1>Sup, I'm sourced</h1>
+    <h1>What's on your to do list?</h1>
     <form class="taskForm">
-      <input class="taskDesc" type="text" name="task" placeholder="Task description">
+      <input class="taskDesc" type="text" name="task" size="50" placeholder="Task description">
+      <!-- <input list="labels" class="labelChoice" name="label" placeholder="Pick or add a label"> -->
+      <select class="labelChoice" name="labels">
+        <option value="home">Home</option>
+        <option value="seagreen">Work</option>
+        <option value="blanchedalmond">School</option>
+        <option value="cornflowerblue">Other</option>
+      </select>
       <input class="submitTask" type="submit" value="Add task">
+      <div class="labelColor hidden">
+        <span>Pick a color for this label: </span>
+        <select name="color">
+          <option value="salmon">Salmon</option>
+          <option value="seagreen">Sea Green</option>
+          <option value="blanchedalmond">Blanched Almond</option>
+          <option value="cornflowerblue">Cornflower Blue</option>
+          <option value="olivedrab">Olive Drab</option>
+        </select>
+      </div>
     </form>
+    <h2>To do:</h2>
     <div class="taskContainer">
     </div>
   </body>

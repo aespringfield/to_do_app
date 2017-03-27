@@ -1,7 +1,42 @@
+body {
+  font-family: sans-serif;
+}
+
 .badInput {
   border: 2px solid red;
 }
 
-.complete {
-  background-color: salmon;
+.complete .taskListing {
+  opacity: 0.5;
+}
+
+.hidden {
+  display: none;
+}
+
+.task {
+  padding: 5px;
+  width: 50%;
+  min-width: 400px;
+  margin: 0 auto;
+}
+
+.completeButton, .deleteButton {
+  float: right;
+  margin: 0 0 0 5px;
+}
+
+.confirmation {
+  background-color: orange;
+  height:50px;
+  padding-top: 10px;
+  padding-left: 45%;
+}
+
+.confirmation button {
+  margin: 0 0 0 5px;
+}
+
+.confirmText, .continue, .cancel {
+  position: relative;
 }
