@@ -1,9 +1,10 @@
+// when document loads, display all tasks in database
+// listen for form submissions & clicks on complete/delete buttons
 $(document).ready(function() {
   refreshTasks();
   submitTask();
   markTaskComplete();
   deleteTask();
-  showColorOptions();
 });
 
 // listens for form submits through "Add task" button, stores task in database, and
@@ -57,7 +58,6 @@ function refreshTasks() {
     type: 'GET',
     url: '/tasks/refresh',
     success: function(response) {
-      console.log(response);
       appendTasks(response);
     }
   });
@@ -88,7 +88,7 @@ function createTaskDiv(task) {
     var dataAttrTaskId = 'data-task_id=' + task.id + " ";
     var dataAttrComplete = 'data-complete=' + task.complete;
     var taskDiv ='<div class="task"' + dataAttrTaskId + dataAttrComplete + '>' +
-                  taskDesc + completeButton + deleteButton +
+                  taskDesc + deleteButton + completeButton +
                   '</div';
     return taskDiv;
 }
@@ -97,8 +97,8 @@ function createTaskDiv(task) {
 function createConfirmationDiv(){
   var html = '<div class="confirmation hidden">' +
             '<span class="confirmText">Are you sure?</span>' +
-            '<button class="continue">Continue</button>' +
-            '<button class="cancel">Cancel</button></div>';
+            '<button class="cancel">Cancel</button>' +
+            '<button class="continue">Continue</button></div>';
   return html;
 }
 
@@ -119,17 +119,18 @@ function indicateBadInput() {
 function markTaskComplete() {
   $('.taskContainer').on('click', '.completeButton', function() {
     var taskId = $(this).parent().data('task_id');
-    console.log(taskId);
     changeCompleteBool(taskId);
   });
 }
 
 // checks to see if a task element had a true value for data-complete and
 // changes its presentation on the DOM
+// hides complete button
 function checkForComplete($task) {
   var complete = $task.data('complete');
   if (complete) {
     $task.addClass('complete');
+    $task.find('.completeButton').addClass('hidden');
   }
 }
 
@@ -152,7 +153,6 @@ function changeCompleteBool(taskId) {
 // refresh task list
 function deleteTask() {
   $('.taskContainer').on('click', '.deleteButton', function() {
-    console.log("delete");
     var $taskEl = $(this).parent();
     // var taskId = $taskEl.data("task_id");
     confirmDelete($taskEl);
@@ -160,10 +160,8 @@ function deleteTask() {
   });
 }
 
-
 // asks user to confirm deletion
 function confirmDelete($taskEl) {
-  console.log("confirm");
   var $confirmDiv = $taskEl.find(".confirmation");
   $confirmDiv.slideDown();
   $('.taskContainer').on('click', '.continue', function() {
@@ -186,12 +184,5 @@ function deleteFromDB(taskId) {
       console.log("Successful delete");
       refreshTasks();
     }
-  });
-}
-
-function showColorOptions() {
-  $('.labelChoice').on('input', function() {
-    console.log("labelcolor");
-    $('.labelColor').slideDown();
   });
 }

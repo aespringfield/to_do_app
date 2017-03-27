@@ -21,7 +21,6 @@ var pool = new pg.Pool(config);
 // sends back 201 status code
 router.post('/create', function(req, res) {
   var task = req.body;
-  console.log(task);
   pool.connect(function(connectionError, db, done) {
     if (connectionError) {
       console.log("ERROR CONNECTING TO DATABASE");
