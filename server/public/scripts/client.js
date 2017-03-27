@@ -1,3 +1,5 @@
+// when document loads, display all tasks in database
+// listen for form submissions & clicks on complete/delete buttons
 $(document).ready(function() {
   refreshTasks();
   submitTask();
@@ -18,6 +20,7 @@ function submitTask() {
       // create task object
       var task = {
         description: $('.taskDesc').val(),
+        label: $('.labelChoice').val(),
         complete: false
       };
 
@@ -55,7 +58,6 @@ function refreshTasks() {
     type: 'GET',
     url: '/tasks/refresh',
     success: function(response) {
-      console.log(response);
       appendTasks(response);
     }
   });
@@ -70,22 +72,34 @@ function appendTasks(taskArray) {
   for (var i = 0; i < taskArray.length; i++) {
     var taskDiv = createTaskDiv(taskArray[i]);
     $el.append(taskDiv);
-    checkForComplete($el.children().last());
+    var $newTask = $el.children().last();
+    var confirmBox = createConfirmationDiv();
+    $newTask.append(confirmBox);
+    checkForComplete($newTask);
   }
 }
 
 // takes a task object with properties id, description, and complete
 // creates a div with the task description, a complete button, and a delete button
 function createTaskDiv(task) {
-    var taskDesc = '<p>' + task.description + '</p>';
+    var taskDesc = '<span class="taskListing">' + task.description + '</span>';
     var completeButton = '<button class="completeButton">Complete</button>';
     var deleteButton = '<button class="deleteButton">Delete</button>';
     var dataAttrTaskId = 'data-task_id=' + task.id + " ";
     var dataAttrComplete = 'data-complete=' + task.complete;
     var taskDiv ='<div class="task"' + dataAttrTaskId + dataAttrComplete + '>' +
-                  taskDesc + completeButton + deleteButton +
+                  taskDesc + deleteButton + completeButton +
                   '</div';
     return taskDiv;
+}
+
+// creates hidden confirmation div
+function createConfirmationDiv(){
+  var html = '<div class="confirmation hidden">' +
+            '<span class="confirmText">Are you sure?</span>' +
+            '<button class="cancel">Cancel</button>' +
+            '<button class="continue">Continue</button></div>';
+  return html;
 }
 
 // resets input field with original placeholder text and no error indicators
@@ -105,17 +119,18 @@ function indicateBadInput() {
 function markTaskComplete() {
   $('.taskContainer').on('click', '.completeButton', function() {
     var taskId = $(this).parent().data('task_id');
-    console.log(taskId);
     changeCompleteBool(taskId);
   });
 }
 
 // checks to see if a task element had a true value for data-complete and
 // changes its presentation on the DOM
+// hides complete button
 function checkForComplete($task) {
   var complete = $task.data('complete');
   if (complete) {
     $task.addClass('complete');
+    $task.find('.completeButton').addClass('hidden');
   }
 }
 
@@ -138,9 +153,23 @@ function changeCompleteBool(taskId) {
 // refresh task list
 function deleteTask() {
   $('.taskContainer').on('click', '.deleteButton', function() {
-    console.log("delete");
-    var taskId = $(this).parent().data("task_id");
+    var $taskEl = $(this).parent();
+    // var taskId = $taskEl.data("task_id");
+    confirmDelete($taskEl);
+    // deleteFromDB(taskId)
+  });
+}
+
+// asks user to confirm deletion
+function confirmDelete($taskEl) {
+  var $confirmDiv = $taskEl.find(".confirmation");
+  $confirmDiv.slideDown();
+  $('.taskContainer').on('click', '.continue', function() {
+    var taskId = $taskEl.data("task_id");
     deleteFromDB(taskId);
+  });
+  $('.taskContainer').on('click', '.cancel', function() {
+    $(this).parent().slideUp();
   });
 }
 
